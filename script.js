@@ -221,7 +221,11 @@ const birthdayScrollReveal = document.getElementById('birthdayScrollReveal');
       birthdayCatLastPaint = 0;
       cancelAnimationFrame(birthdayCatFrame);
       scheduleBirthdayCat();
-      if (birthdayAudio && birthdayAudio.paused && birthdaySound) birthdaySound.classList.add('visible');
+
+      // If autoplay was rejected outside the user gesture, expose the click-to-play control.
+      if (birthdayAudio && birthdayAudio.paused && birthdaySound) {
+        birthdaySound.classList.add('visible');
+      }
     }, 1000);
   }
 
