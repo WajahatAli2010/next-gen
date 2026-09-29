@@ -997,7 +997,8 @@
           <div class="photo" data-label="Memory 01"></div>
           <div class="caption"><span>The main character moment</span><span>01 / 04</span></div>
         </article>
-        <article class="frame reveal delay-1" style="--r:2.2deg" data-title="Proof we were there">          <div class="photo" data-label="Memory 02"></div>
+        <article class="frame reveal delay-1" style="--r:2.2deg" data-title="Proof we were there">
+          <div class="photo" data-label="Memory 02"></div>
           <div class="caption"><span>Proof we survived</span><span>02 / 04</span></div>
         </article>
         <article class="frame reveal delay-2" style="--r:-2deg" data-title="This one has lore">
@@ -1194,18 +1195,13 @@
   const finale = document.getElementById('birthdayFinale');
   const devNote = document.getElementById('dev-note');
   const devNoteExit = document.getElementById('devNoteExit');
+  const birthdayAudio = document.getElementById('birthdayAudio');
   let finaleStarted = false;
-  let birthdayAudioTimer = null;
-  const finaleObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !finaleStarted && poemPlayed) startFinale();
-    });
-  }, {threshold:.7});
-  finaleObserver.observe(ending);
 
   let poemPlayed = false;
   let poemLocked = false;
   let poemWheelStart = 0;
+  let poemUnlocked = false;
   const poemObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && !poemPlayed && entry.intersectionRatio >= .5) {
@@ -1228,8 +1224,10 @@
     if (!poemWheelStart) poemWheelStart = performance.now();
     if (e.deltaY >= 14 || performance.now() - poemWheelStart > 450) {
       poemLocked = false;
+      poemUnlocked = true;
       document.body.classList.remove('poem-locked');
       poemObserver.disconnect();
+      setTimeout(startFinale, 350);
     }
   }, {passive:true});
 
@@ -1240,12 +1238,10 @@
     setTimeout(()=>{
       finale.classList.add('active');
       blackout.classList.remove('active');
-      const birthdayAudio = document.getElementById('birthdayAudio');
       if (birthdayAudio && birthdayAudio.src) birthdayAudio.play().catch(() => {});
     },1000);
   }
   document.getElementById('birthdayClose').addEventListener('click', () => {
-    const birthdayAudio = document.getElementById('birthdayAudio');
     if (birthdayAudio) birthdayAudio.pause();
     finale.classList.remove('active');
   });
